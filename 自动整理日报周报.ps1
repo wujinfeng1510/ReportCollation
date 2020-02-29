@@ -81,13 +81,13 @@ if($ReportType -eq 1)
             $WorkSheet = $WorkBook.Sheets.Item(1)
             $DataItem = New-Object DaliyReportItem
             $DataItem.Index=$i
-            $DataItem.Name =        $WorkSheet.Range("B6").Text
-            $DataItem.Date =        $WorkSheet.Range("A6").Text
-            $DataItem.department =  $WorkSheet.Range("C6").Text
-            $DataItem.position =    $WorkSheet.Range("D6").Text
-            $DataItem.Project =     $WorkSheet.Range("E6").Text
-            $DataItem.report =      $WorkSheet.Range("F6").Text
-            $DataItem.other =       $WorkSheet.Range("G6").Text
+            $DataItem.Name =        $WorkSheet.Range("B7").Text
+            $DataItem.Date =        $WorkSheet.Range("A7").Text
+            $DataItem.department =  $WorkSheet.Range("C7").Text
+            $DataItem.position =    $WorkSheet.Range("D7").Text
+            $DataItem.Project =     $WorkSheet.Range("E7").Text
+            $DataItem.report =      $WorkSheet.Range("F7").Text
+            $DataItem.other =       $WorkSheet.Range("G7").Text
             $Data += $DataItem
             $WorkBook.Close()
         }
