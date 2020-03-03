@@ -52,7 +52,7 @@ $dateStr= ($ExcelFilesFolderDir -split "\\")[-1] #取文件夹的名称，代表
 
 $logFile="$CurrentPslPath`\\log_$dateStr.md"
 
-write-output "#脚本信息日志`n" > $logFile
+write-output "# 脚本信息日志`n" > $logFile
 #判断是否为有效的目录路径
 while((Test-Path -Path $ExcelFilesFolderDir -PathType Container) -eq $false)
 {
@@ -62,8 +62,11 @@ $Files = Get-ChildItem -Path $ExcelFilesFolderDir -Filter *.xls?
 Write-Host "总共有"$Files.Count"个excel表。"
 
 $ReportType = Read-Host "请问统计的是周报还是日报，日报输入1，周报输入2"
+write-output "## 统计错误信息  " >> $logFile
+$errorNumber=1
 if($ReportType -eq 1)
 {
+    $reportTypeName="日报"
     $Data = @() #定义Data为数组
     # Create an Object Excel.Application using Com interface
     $objExcel = New-Object -ComObject Excel.Application
@@ -80,7 +83,8 @@ if($ReportType -eq 1)
         # $WorkBook.FullName|Write-Host
         if($null -eq $WorkBook.FullName)
         {
-            write-output "打不开$File" >> $logFile
+            write-output "$errorNumber`:打不开$File" >> $logFile
+            $errorNumber = $errorNumber+1
         }
         else
         {
@@ -103,6 +107,7 @@ if($ReportType -eq 1)
 }
 elseif($ReportType -eq 2)
 {
+    $reportTypeName="周报"
     $Data = @() #定义Data为数组
     # Create an Object Excel.Application using Com interface
     $objExcel = New-Object -ComObject Excel.Application
@@ -119,7 +124,8 @@ elseif($ReportType -eq 2)
         # $WorkBook.FullName|Write-Host
         if($null -eq $WorkBook.FullName)
         {
-            write-output "打不开$File" >> "$CurrentPslPath`\\message.txt"
+            write-output "$errorNumber`:打不开$File" >> $logFile
+            $errorNumber = $errorNumber+1
         }
         else
         {
@@ -144,6 +150,10 @@ elseif($ReportType -eq 2)
         }
     }  
 }
+if($errorNumber -eq 1)
+{
+    write-output "没有错误" `n >> $logFile
+}
 $objExcel.Quit()
 Stop-Process -Name excel
 
@@ -160,8 +170,8 @@ $excel = New-Object -ComObject Excel.Application
 # $excel.Workbooks.Open("$ExportFilePath.csv").SaveAs("$ExportFilePath.xlsx",51, [Type]::Missing, [Type]::Missing, $false, $false, 1, 2)
 $excel.Workbooks.Open("$ExportFilePath.csv").SaveAs("$ExportFilePath.xlsx",51)
 
-Write-Host "正在统计没交日报的人...."
-write-output "`统计没交日报的人名单" >> $logFile
+Write-Host "正在统计没交$reportTypeName`的人...."
+write-output "## 统计没交$reportTypeName`的人名单  " >> $logFile
 # $MemberListExcelFile = Read-Host "输入需要提交日报或周报的人员名单excel文件"
 if($ReportType -eq 1)
 {
@@ -173,6 +183,7 @@ elseif($ReportType -eq 2)
 }
 $NameWorkBook=$excel.Workbooks.open($MemberListExcelFile)
 $NameWorkSheet=$NameWorkBook.Sheets.Item(1)
+$notReportPersonNumber=1
 for($i=2;;$i++)
 {
     $name=$NameWorkSheet.Range("B$i").Text
@@ -180,13 +191,18 @@ for($i=2;;$i++)
     {
         if($Data.Name -notcontains $name)
         {
-            write-output "$name  的日报没有交!" >> $logFile
+            write-output "$notReportPersonNumber：$name  $reportTypeName`没有交!  " >> $logFile
+            $notReportPersonNumber=$notReportPersonNumber+1
         }
     }
     else
     {
         break;    
     }
+}
+if($notReportPersonNumber -eq 1)
+{
+    write-output "所有人的$reportType`都交了!  " >> $logFile
 }
 
 $excel.Quit()
