@@ -1,0 +1,31 @@
+{
+    "weeklyReport": 
+    {
+        "sheetNumber":1,
+        "Name": "C2",
+        "position": "E2",
+        "Project": "C3",
+        "Date": "E4",
+        "projectTimeRatio": "E3",
+        "thisWeekPlan": "C5",
+        "thisWeekReport": "C6",
+        "needFeedbackProblem": "C7",
+        "needHelp": "C8",
+        "nextWeekPlan": "C9",
+        "other": "C10"
+    },
+    "dailyReport": 
+    {
+        "sheetNumber":1,
+        "Name": "B7",
+        "Date": "A7",
+        "department": "C7",
+        "position": "D7",
+        "Project": "E7",
+        "report": "F7",
+        "other": "G7"
+    },
+    "readFloderPath":"C:\\Users\\wujf_nuc\\Desktop\\2.28",
+    "dailyReportNameExcel":"C:\\Users\\wujf_nuc\\Documents\\GitHub\\ReportCollation\\DailyReportList.xlsx",
+    "weeklyReportNameExcel":"C:\\Users\\wujf_nuc\\Documents\\GitHub\\ReportCollation\\WeekyReportList.xlsx"
+}

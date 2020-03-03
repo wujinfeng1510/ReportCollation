@@ -1,9 +1,17 @@
-﻿
+﻿# 从config.json文件读取配置信息
+$CONF = (Get-Content "config.json") | ConvertFrom-Json
+$ExcelFilesFolderDir = $CONF.readFloderPath
+$dailyReportListExcelFile = $CONF.dailyReportNameExcel
+$weeklyReportListExcelFile = $CONF.weeklyReportNameExcel
+$dailyReportPosition= $CONF.dailyReport
+$weeklyReportPosition=$CONF.weeklyReport
+
+
 #下面定义class
 Add-Type @'
 public class DaliyReportItem    
 {
-    public int Index     = 0;   
+    public int    Index     = 0;   
     public string Name      = "";   
     public string Date  = ""; 
     public string department      = "";  
@@ -34,7 +42,7 @@ public class WeekyReportItem
 "@
 
 #输入目录路径
-$ExcelFilesFolderDir = Read-Host "输入要整理的excel表格的文件夹完整路径"
+# $ExcelFilesFolderDir = Read-Host "输入要整理的excel表格的文件夹完整路径"
 # $ExcelFilesFolderDir = "C:\Users\jeffWu\Documents\yanghaimei\dailyReport\2.26"
 
 # $CurrentPslPath = Split-Path -Parent $MyInvocation.MyCommand.Definition  # 应该和$PWD一样的吧
@@ -78,16 +86,16 @@ if($ReportType -eq 1)
         {
             # Load the WorkSheet
             $i=$i+1
-            $WorkSheet = $WorkBook.Sheets.Item(1)
+            $WorkSheet = $WorkBook.Sheets.Item($dailyReportPosition.sheetNumber)
             $DataItem = New-Object DaliyReportItem
             $DataItem.Index=$i
-            $DataItem.Name =        $WorkSheet.Range("B7").Text
-            $DataItem.Date =        $WorkSheet.Range("A7").Text
-            $DataItem.department =  $WorkSheet.Range("C7").Text
-            $DataItem.position =    $WorkSheet.Range("D7").Text
-            $DataItem.Project =     $WorkSheet.Range("E7").Text
-            $DataItem.report =      $WorkSheet.Range("F7").Text
-            $DataItem.other =       $WorkSheet.Range("G7").Text
+            $DataItem.Name =        $WorkSheet.Range($dailyReportPosition.Name).Text
+            $DataItem.Date =        $WorkSheet.Range($dailyReportPosition.Date).Text
+            $DataItem.department =  $WorkSheet.Range($dailyReportPosition.department).Text
+            $DataItem.position =    $WorkSheet.Range($dailyReportPosition.position).Text
+            $DataItem.Project =     $WorkSheet.Range($dailyReportPosition.Project).Text
+            $DataItem.report =      $WorkSheet.Range($dailyReportPosition.report).Text
+            $DataItem.other =       $WorkSheet.Range($dailyReportPosition.other).Text
             $Data += $DataItem
             $WorkBook.Close()
         }
@@ -117,20 +125,20 @@ elseif($ReportType -eq 2)
         {
             # Load the WorkSheet
             $i=$i+1
-            $WorkSheet = $WorkBook.Sheets.Item(1)
+            $WorkSheet = $WorkBook.Sheets.Item($weeklyReportPosition.sheetNumber)
             $DataItem                       = New-Object WeekyReportItem
             $DataItem.Index=$i
-            $DataItem.Name                  = $WorkSheet.Range("C2").Text
-            $DataItem.position              = $WorkSheet.Range("E2").Text
-            $DataItem.Project               = $WorkSheet.Range("C3").Text
-            $DataItem.Date                  = $WorkSheet.Range("E4").Text
-            $DataItem.projectTimeRatio      = $WorkSheet.Range("E3").Text
-            $DataItem.thisWeekPlan          = $WorkSheet.Range("C5").Text
-            $DataItem.thisWeekReport        = $WorkSheet.Range("C6").Text
-            $DataItem.needFeedbackProblem   = $WorkSheet.Range("C7").Text
-            $DataItem.needHelp              = $WorkSheet.Range("C8").Text
-            $DataItem.nextWeekPlan          = $WorkSheet.Range("C9").Text
-            $DataItem.other                 = $WorkSheet.Range("C10").Text
+            $DataItem.Name                  = $WorkSheet.Range($weeklyReportPosition.Name).Text
+            $DataItem.position              = $WorkSheet.Range($weeklyReportPosition.position).Text
+            $DataItem.Project               = $WorkSheet.Range($weeklyReportPosition.Project).Text
+            $DataItem.Date                  = $WorkSheet.Range($weeklyReportPosition.Date).Text
+            $DataItem.projectTimeRatio      = $WorkSheet.Range($weeklyReportPosition.projectTimeRatio).Text
+            $DataItem.thisWeekPlan          = $WorkSheet.Range($weeklyReportPosition.thisWeekPlan).Text
+            $DataItem.thisWeekReport        = $WorkSheet.Range($weeklyReportPosition.thisWeekReport).Text
+            $DataItem.needFeedbackProblem   = $WorkSheet.Range($weeklyReportPosition.needFeedbackProblem).Text
+            $DataItem.needHelp              = $WorkSheet.Range($weeklyReportPosition.needHelp).Text
+            $DataItem.nextWeekPlan          = $WorkSheet.Range($weeklyReportPosition.nextWeekPlan).Text
+            $DataItem.other                 = $WorkSheet.Range($weeklyReportPosition.other).Text
             $Data += $DataItem
             $WorkBook.Close()
         }
@@ -154,7 +162,15 @@ $excel.Workbooks.Open("$ExportFilePath.csv").SaveAs("$ExportFilePath.xlsx",51)
 
 Write-Host "正在统计没交日报的人...."
 write-output "`统计没交日报的人名单" >> $logFile
-$MemberListExcelFile = Read-Host "输入需要提交日报或周报的人员名单excel文件"
+# $MemberListExcelFile = Read-Host "输入需要提交日报或周报的人员名单excel文件"
+if($ReportType -eq 1)
+{
+    $MemberListExcelFile=$dailyReportListExcelFile
+}
+elseif($ReportType -eq 2)
+{
+    $MemberListExcelFile=$weeklyReportListExcelFile
+}
 $NameWorkBook=$excel.Workbooks.open($MemberListExcelFile)
 $NameWorkSheet=$NameWorkBook.Sheets.Item(1)
 for($i=2;;$i++)
