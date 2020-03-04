@@ -1,4 +1,10 @@
-﻿# 从config.json文件读取配置信息
+﻿# $PSScriptRoot 就是当前的脚本的路径 powershell 3.0自动变量，以前版本需要使用自己建个变量获取 $PSScriptRoot=plit-Path -Parent $MyInvocation.MyCommand.Definition
+
+#切换当前路径到运行脚本的文件夹
+$savePWD=$PWD
+Set-Location $PSScriptRoot
+
+# 从config.json文件读取配置信息
 $CONF = (Get-Content "config.json") | ConvertFrom-Json
 $ExcelFilesFolderDir = $CONF.readFloderPath
 $dailyReportListExcelFile = $CONF.dailyReportNameExcel
@@ -41,16 +47,9 @@ public class WeekyReportItem
 }
 "@
 
-#输入目录路径
-# $ExcelFilesFolderDir = Read-Host "输入要整理的excel表格的文件夹完整路径"
-# $ExcelFilesFolderDir = "C:\Users\jeffWu\Documents\yanghaimei\dailyReport\2.26"
-
-# $CurrentPslPath = Split-Path -Parent $MyInvocation.MyCommand.Definition  # 应该和$PWD一样的吧
-$CurrentPslPath=$PWD
-
 $dateStr= ($ExcelFilesFolderDir -split "\\")[-1] #取文件夹的名称，代表是那天的日报
 
-$logFile="$CurrentPslPath`\\log_$dateStr.md"
+$logFile="log_$dateStr.md"
 
 write-output "# 脚本信息日志`n" > $logFile
 #判断是否为有效的目录路径
@@ -157,7 +156,7 @@ if($errorNumber -eq 1)
 $objExcel.Quit()
 Stop-Process -Name excel
 
-$ExportFilePath = Join-Path -Path $CurrentPslPath -ChildPath "$dateStr`文件夹的统计结果"
+$ExportFilePath ="$dateStr`文件夹的统计结果"
 $Data | Export-Csv "$ExportFilePath.csv" -NoTypeInformation -Encoding UTF8
 
 if(Test-Path "$ExportFilePath.xlsx")
@@ -168,7 +167,7 @@ if(Test-Path "$ExportFilePath.xlsx")
 $excel = New-Object -ComObject Excel.Application 
 # $excel.Visible = $true
 # $excel.Workbooks.Open("$ExportFilePath.csv").SaveAs("$ExportFilePath.xlsx",51, [Type]::Missing, [Type]::Missing, $false, $false, 1, 2)
-$excel.Workbooks.Open("$ExportFilePath.csv").SaveAs("$ExportFilePath.xlsx",51)
+$excel.Workbooks.Open("$PWD\$ExportFilePath.csv").SaveAs("$PWD\$ExportFilePath.xlsx",51)
 
 Write-Host "正在统计没交$reportTypeName`的人...."
 write-output "## 统计没交$reportTypeName`的人名单  " >> $logFile
@@ -207,5 +206,9 @@ if($notReportPersonNumber -eq 1)
 
 $excel.Quit()
 Write-Host "统计完成！！！！"
+
+#恢复当前工作路径
+Set-Location $savePWD
+
 exit
 # explorer.exe "/Select,$ExportFilePath.xlsx"
