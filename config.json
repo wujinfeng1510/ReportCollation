@@ -16,16 +16,16 @@
     },
     "dailyReport": 
     {
-        "sheetNumber":2,
-        "Name": "B3",
-        "Date": "A3",
-        "department": "C3",
-        "position": "D3",
-        "Project": "E3",
-        "report": "F3",
-        "other": "G3"
+        "sheetNumber":6,
+        "Name": "B6",
+        "Date": "A6",
+        "department": "C6",
+        "position": "D6",
+        "Project": "E6",
+        "report": "F6",
+        "other": "G6"
     },
-    "readFloderPath":"C:\\Users\\wujf_nuc\\Desktop\\03.02",
+    "readFloderPath":"C:\\Users\\wujf_nuc\\Desktop\\04.02",
     "dailyReportNameExcel":"C:\\Users\\wujf_nuc\\Documents\\GitHub\\ReportCollation\\DailyReportList.xlsx",
     "weeklyReportNameExcel":"C:\\Users\\wujf_nuc\\Documents\\GitHub\\ReportCollation\\WeekyReportList.xlsx"
 }

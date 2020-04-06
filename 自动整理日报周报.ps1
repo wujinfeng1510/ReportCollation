@@ -82,7 +82,7 @@ if($ReportType -eq 1)
         # $WorkBook.FullName|Write-Host
         if($null -eq $WorkBook.FullName)
         {
-            write-output "$errorNumber`:打不开$File" >> $logFile
+            write-output "$errorNumber`:打不开$File  " >> $logFile
             $errorNumber = $errorNumber+1
         }
         else
